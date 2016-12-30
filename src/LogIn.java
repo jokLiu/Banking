@@ -1,19 +1,20 @@
+import java.io.Serializable;
 
-public class LogIn<User extends Comparable<User>,Psw extends Comparable<Psw>> {
-	private User usr;
-	private Psw psw;
+public class LogIn implements Serializable {
+	private String usr;
+	private String psw;
 	
-	public LogIn(User usr, Psw psw)
+	public LogIn(String usr, String psw)
 	{
 		this.usr = usr;
 		this.psw = psw;
 	}
 
-	public User getUsr() {
+	public String getUsr() {
 		return usr;
 	}
 
-	public Psw getPsw() {
+	public String getPsw() {
 		return psw;
 	}
 }

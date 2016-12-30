@@ -1,5 +1,6 @@
+import java.io.Serializable;
 
-public enum CardType {
+public enum CardType{
 	Credit, VisaDebit, 	MasterCard, Maestro, VisaElectron
 	
 

@@ -3,6 +3,7 @@ import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
 import javax.swing.JButton;
@@ -16,7 +17,7 @@ import javax.swing.JTextField;
 public class RegisterView extends JFrame {
 	
 	private ObjectOutputStream toServer;
-	
+	private ObjectInputStream fromServer; 
 	private JComboBox<Titles> title;
 	private JTextField fName;
 	private JTextField surname;
@@ -35,12 +36,12 @@ public class RegisterView extends JFrame {
 	private JButton submit;
 	private JButton exit;
 	
-	public RegisterView(ObjectOutputStream toServer)
+	public RegisterView(ObjectOutputStream toServer, ObjectInputStream fromServer)
 	{
 		super("Registration");
 		
 		this.toServer = toServer;
-		
+		this.fromServer = fromServer;
 		JPanel panel = new JPanel(new GridLayout(16,2,2,2));
 		
 		
@@ -167,14 +168,31 @@ public class RegisterView extends JFrame {
 				info.setTelNr2(tel2.getText());
 				info.setTelNr3(tel3.getText());
 				info.setUsername(usr.getText());
-				info.setPassword(psw.getPassword().toString());
-				info.setSecretWord(secret.getPassword().toString());
+				info.setPassword(String.valueOf(psw.getPassword()));
+				info.setSecretWord(String.valueOf(secret.getPassword()).toLowerCase());
 				info.setType((CardType)type.getSelectedItem());
 				try {
 					toServer.writeObject(Requests.Register);
 					toServer.writeObject(info);
+					Requests r = (Requests) fromServer.readObject();
 					
+					switch(r)
+					{
+						case RegisterUnsuccessful:
+							//TODO register unsuccessful window
+						case RegisterSuccessful:
+							//TODO register successful window
+							EventQueue.invokeLater(() -> {
+								JFrame frame = new LogInView(toServer, fromServer);
+								frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+								frame.setVisible(true);
+							});
+							dispose();
+					}
 				} catch (IOException e1) {
+					e1.printStackTrace();
+				} catch (ClassNotFoundException e1) {
+					
 					e1.printStackTrace();
 				}
 			}
@@ -182,14 +200,6 @@ public class RegisterView extends JFrame {
 		});
 	}
 	
-	public static void main(String[] args)
-	{
-		EventQueue.invokeLater(() -> {
-			ObjectOutputStream toCustomer = null;
-			JFrame frame = new RegisterView(toCustomer);
-			frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-			frame.setVisible(true);
-		});
-	}
+	
 
 }

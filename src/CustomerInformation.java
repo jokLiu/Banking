@@ -1,5 +1,6 @@
+import java.io.Serializable;
 
-public class CustomerInformation {
+public class CustomerInformation implements Serializable{
 	//name
 	private Titles title;
 	private String firstName;

@@ -32,7 +32,12 @@ public class BankServer {
 		createTables.createTables();
 
 		
-		
+//		char[] lol = new char[3];
+//		lol[1]='a';
+//		lol[0]='l';
+//		lol[2]='b';
+//		
+//		System.out.println(lol.toString());
 		
 	/*	//testing 
 		

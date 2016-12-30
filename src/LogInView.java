@@ -4,6 +4,7 @@ import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
 import javax.swing.JButton;
@@ -11,7 +12,6 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
-import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
@@ -23,13 +23,13 @@ public class LogInView extends JFrame{
 	private JButton logIn;
 	private JButton register;
 	private ObjectOutputStream toServer;
-	
-	public LogInView(ObjectOutputStream toServer)
+	private ObjectInputStream fromServer;
+	public LogInView(ObjectOutputStream toServer, ObjectInputStream fromServer)
 	{
 		super("Bank Log In");
 		
 		this.toServer = toServer;
-		
+		this.fromServer = fromServer;
 		username = new JTextField();
 		password = new JPasswordField();
 		logIn = new JButton("Log In");
@@ -49,62 +49,11 @@ public class LogInView extends JFrame{
 		add(southPanel, BorderLayout.SOUTH);
 		
 		addLogInAction();
-		
+		addRegisterListener();
 		
 		pack();
 		
 		
-		/*
-		setSize(300,200);
-		setLocation(500,280);
-		panel.setLayout (null); 
-		
-		
-		
-		addLogInAction();
-		
-		panel.add(username);
-		panel.add(password);
-		panel.add(logIn);
-		panel.add(register);
-	
-		add(panel);
-		getContentPane().add(panel);
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setVisible(true);
-		
-		
-		password = new JPasswordField(15);
-	    getContentPane().add(password);
-
-	    username = new JTextArea(1,15);
-	    getContentPane().add(username);
-	   
-
-	    JLabel lblUsername = new JLabel("Username");
-	    getContentPane().add(lblUsername);
-
-	    JLabel lblPassword = new JLabel("Password");
-	    getContentPane().add(lblPassword);
-
-	    logIn = new JButton("Login");
-	    getContentPane().add(logIn);
-
-	    register = new JButton("New User ?");
-	    getContentPane().add(register);
-	    
-	    panel.add(username);
-	    panel.add(password);
-	    panel.add(logIn);
-	    panel.add(register);
-	    panel.add(lblUsername);
-	    panel.add(lblPassword);
-	    
-	    add(panel);
-	    setSize(300,300);
-	    setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setVisible(true);
-		pack();*/
 		
 	}
 	
@@ -119,12 +68,50 @@ public class LogInView extends JFrame{
 				char[] psw = password.getPassword();
 				try {
 					toServer.writeObject(Requests.LogIn);
-					toServer.writeObject(new LogIn<String,String>(name,psw.toString()));
+					toServer.writeObject(new LogIn(name,String.valueOf(psw)));
+					
 					psw = new char[0];
-				} catch (IOException e1) {
+					
+					Requests r = (Requests)fromServer.readObject();
+					switch(r)
+					{
+					case WrongLogIn:
+						//TODO display wrong log in or password
+					case Secret:
+						
+						int[] secret = (int[])fromServer.readObject();
+						EventQueue.invokeLater(() -> {
+							JFrame frame = new SecretPasswordView(toServer, fromServer,secret);
+							frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+							frame.setVisible(true);
+						});
+						dispose();
+					}
+				} catch (IOException | ClassNotFoundException e1) {
 					e1.printStackTrace();
 				}
 			}
+			
+		});
+	}
+	
+	
+	private void addRegisterListener()
+	{
+		register.addActionListener(new ActionListener(){
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				EventQueue.invokeLater(() -> {
+					
+					JFrame frame = new RegisterView(toServer, fromServer);
+					frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+					frame.setVisible(true);
+					dispose();
+				});
+				
+			}
+			
 			
 		});
 	}
@@ -134,7 +121,8 @@ public class LogInView extends JFrame{
 
 		EventQueue.invokeLater(() -> {
 			ObjectOutputStream toCustomer = null;
-			JFrame frame = new LogInView(toCustomer);
+			ObjectInputStream fromServer = null;
+			JFrame frame = new LogInView(toCustomer, fromServer);
 			frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 			frame.setVisible(true);
 		});

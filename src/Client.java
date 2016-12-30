@@ -1,8 +1,11 @@
+import java.awt.EventQueue;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.net.UnknownHostException;
+
+import javax.swing.JFrame;
 
 public class Client {
 	public static void main(String[] args) {
@@ -30,6 +33,13 @@ public class Client {
 			System.err.println("Server is not running");
 			System.exit(1);
 		}
+		ObjectOutputStream toServer2 = toServer;
+		ObjectInputStream fromServer2 = fromServer;
+		EventQueue.invokeLater(() -> {
+			JFrame frame = new LogInView(toServer2, fromServer2);
+			frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+			frame.setVisible(true);
+		});
 		
 		Thread helper = new CustomerHelper(fromServer, toServer);
 		helper.start();

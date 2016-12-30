@@ -8,7 +8,7 @@ public class ServerHelper extends Thread{
 	private ManageDatabase db;
 	private ObjectInputStream fromCustomer;
 	private ObjectOutputStream toCustomer;
-	private int[] threeSecret = new int[3];
+	private char[] threeSecret = new char[3];
 	private int[] threeBits = new int[3];
 	private int id;
 	public ServerHelper(ManageDatabase db, ObjectInputStream fromCustomer, ObjectOutputStream toCustomer)
@@ -66,8 +66,13 @@ public class ServerHelper extends Thread{
 	{
 		try {
 			db.addAccount((CustomerInformation) fromCustomer.readObject());
+			toCustomer.writeObject(Requests.RegisterSuccessful);
 		} catch (ClassNotFoundException | IOException e) {
-			e.printStackTrace();
+			try {
+				toCustomer.writeObject(Requests.RegisterUnsuccessful);
+			} catch (IOException e1) {
+
+			}
 		}
 	}
 	
@@ -75,10 +80,10 @@ public class ServerHelper extends Thread{
 	private void logIn()
 	{
 		try {
-			LogIn<String,String> logIn = (LogIn<String, String>) fromCustomer.readObject();
+			LogIn logIn = (LogIn) fromCustomer.readObject();
 			String secret = db.isUserValid(logIn.getUsr(), logIn.getPsw());
 			
-			
+			System.out.println(secret);
 			if(secret != null){
 				id = db.getId(logIn.getUsr(), logIn.getPsw());
 				toCustomer.writeObject(Requests.Secret);
@@ -103,9 +108,10 @@ public class ServerHelper extends Thread{
 	private void secret()
 	{
 		try {
-			int[] temp = (int[]) fromCustomer.readObject();
+			char[] temp = (char[]) fromCustomer.readObject();
 			if(temp.equals(threeSecret))
 			{
+				System.out.println("yey");
 				toCustomer.writeObject(Requests.LogInValid);
 				CustomerInformation info = db.getInformation(id);
 				info.setId(id);
