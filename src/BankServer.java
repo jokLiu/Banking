@@ -34,7 +34,7 @@ public class BankServer {
 		
 		
 		
-		//testing 
+	/*	//testing 
 		
 		CustomerInformation info = new CustomerInformation();
 		info.setTitle(Titles.Mr);
@@ -52,15 +52,15 @@ public class BankServer {
 		info.setPassword("123456");
 		info.setSecretWord("akvile");
 		info.setType(CardType.Credit);
-		
+		*/
 		//initialising the object to deal with different requests
 		ManageDatabase database = new ManageDatabase(conn);
 		
-		
+		/*
 		database.addAccount(info);
 		System.out.println(database.getBalance(1000));
 		database.depositMoney(1000, 123.15);
-		System.out.println(database.getBalance(1000));
+		System.out.println(database.getBalance(1000));*/
 		// loop forever listening to new connections
 		try {
 			while (true) {
@@ -71,9 +71,11 @@ public class BankServer {
 				// establish streams from a single client
 				ObjectInputStream readFromClient = new ObjectInputStream(socket.getInputStream());
 				ObjectOutputStream writeToClient = new ObjectOutputStream(socket.getOutputStream());
-
 				System.out.println("accepted");
+			
+				(new ServerHelper(database, readFromClient, writeToClient)).start();
 			}
+			
 		} catch (IOException e) {
 			System.err.println("error");
 			System.exit(1);

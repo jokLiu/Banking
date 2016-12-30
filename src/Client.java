@@ -30,6 +30,15 @@ public class Client {
 			System.err.println("Server is not running");
 			System.exit(1);
 		}
+		
+		Thread helper = new CustomerHelper(fromServer, toServer);
+		helper.start();
+		
+		try {
+			helper.join();
+		} catch (InterruptedException e1) {
+			
+		}
 
 		//closing the streams and the socket with the server
 		try {

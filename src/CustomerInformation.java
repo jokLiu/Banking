@@ -22,6 +22,15 @@ public class CustomerInformation {
 	private String password;
 	private String secretWord;
 	private CardType type;
+	private int id;
+	
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
+	}
 
 	public CardType getType() {
 		return type;

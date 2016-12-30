@@ -207,7 +207,7 @@ public class ManageDatabase {
 	}
 	
 	
-	public synchronized double getBalance(int id)
+	public double getBalance(int id)
 	{
 		try {
 			PreparedStatement getBalance = conn
@@ -226,6 +226,53 @@ public class ManageDatabase {
 						e.printStackTrace();
 		}
 		
+		return 0;
+	}
+	
+	
+	//return secret word if valid, otherwise null
+	public String isUserValid(String username, String psw)
+	{
+		try {
+			PreparedStatement getAccount = conn
+					.prepareStatement( "SELECT secretWord FROM Account WHERE username = ? AND password = ? ;"
+							);
+			
+			getAccount.setString(1, username);
+			getAccount.setString(2, psw);
+			
+			ResultSet res = getAccount.executeQuery();
+			
+			while(res.next())
+			{
+				return res.getString("secretWord");
+			}
+		} catch (SQLException e) {
+			return null;
+		}
+		return null;
+	}
+	
+	
+	public int getId(String usr, String psw)
+	{
+		try {
+			PreparedStatement getAccount = conn
+					.prepareStatement( "SELECT id FROM Account WHERE username = ? AND password = ? ;"
+							);
+			
+			getAccount.setString(1, usr);
+			getAccount.setString(2, psw);
+			
+			ResultSet res = getAccount.executeQuery();
+			
+			while(res.next())
+			{
+				return res.getInt("id");
+			}
+		} catch (SQLException e) {
+			return 0;
+		}
 		return 0;
 	}
 }
