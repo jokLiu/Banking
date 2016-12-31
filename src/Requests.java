@@ -2,6 +2,6 @@ import java.io.Serializable;
 
 public enum Requests implements Serializable{
 	Register, LogIn, Secret, WrongLogIn, LogInValid, WrongSecret, 
-	Deposit, Withdraw, Transfer, ActionHistory, Update, 
+	Deposit, Withdraw, Transfer, ActionHistory, Update, Details,
 	Exit, RegisterSuccessful, RegisterUnsuccessful
 }

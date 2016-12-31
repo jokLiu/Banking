@@ -10,6 +10,7 @@ import java.io.ObjectOutputStream;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
@@ -76,7 +77,11 @@ public class LogInView extends JFrame{
 					switch(r)
 					{
 					case WrongLogIn:
-						//TODO display wrong log in or password
+						JOptionPane.showMessageDialog(new JFrame(),
+						"Wrong username or password!",
+						"Error",
+						JOptionPane.WARNING_MESSAGE);
+						break;
 					case Secret:
 						
 						int[] secret = (int[])fromServer.readObject();
@@ -86,6 +91,7 @@ public class LogInView extends JFrame{
 							frame.setVisible(true);
 						});
 						dispose();
+						break;
 					}
 				} catch (IOException | ClassNotFoundException e1) {
 					e1.printStackTrace();

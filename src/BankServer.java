@@ -30,7 +30,7 @@ public class BankServer {
 		CreateDBTables createTables = new CreateDBTables(conn);
 		createTables.deleteTables();
 		createTables.createTables();
-
+//
 		
 //		char[] lol = new char[3];
 //		lol[1]='a';

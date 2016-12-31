@@ -19,7 +19,6 @@ public class CustomerHelper extends Thread {
 		boolean running = true;
 		while(running)
 		{
-			
 		}
 	}
 }

@@ -18,7 +18,7 @@ public class ManageDatabase {
 	public synchronized void addAccount(CustomerInformation info)
 	{
 		try {
-			
+//			TODO fix the id problem
 			//creating customer
 			PreparedStatement singleCustomer = conn
 					.prepareStatement("INSERT INTO Customer (id) " + "VALUES (?); ");
@@ -183,22 +183,27 @@ public class ManageDatabase {
 			ResultSet addressRes  = getAddress.executeQuery();
 			ResultSet contRes  = getContacts.executeQuery();
 			
-			int childID;
-			String name = null;
-			String address = null;
 			
-			info.setTitle(Titles.valueOf(nameRes.getString("title")));
-			info.setFirstName(nameRes.getString("firstName"));
-			info.setSurname(nameRes.getString("surname"));
-			info.setStreet(addressRes.getString("street"));
-			info.setStreetNr(addressRes.getInt("nr"));
-			info.setCity(addressRes.getString("city"));
-			info.setPostCode(addressRes.getString("postCode"));
-			info.setEmail(contRes.getString("email"));
-			info.setMainTel(contRes.getString("mainTelNr"));
-			info.setTelNr2(contRes.getString("telNr2"));
-			info.setTelNr3(contRes.getString("telNr3"));
-			
+			while(nameRes.next())
+			{
+				info.setTitle(Titles.valueOf(nameRes.getString("title")));
+				info.setFirstName(nameRes.getString("firstName"));
+				info.setSurname(nameRes.getString("surname"));
+			}
+			while(addressRes.next())
+			{
+				info.setStreet(addressRes.getString("street"));
+				info.setStreetNr(addressRes.getInt("nr"));
+				info.setCity(addressRes.getString("city"));
+				info.setPostCode(addressRes.getString("postCode"));
+			}
+			while(contRes.next())
+			{
+				info.setEmail(contRes.getString("email"));
+				info.setMainTel(contRes.getString("mainTelNr"));
+				info.setTelNr2(contRes.getString("telNr2"));
+				info.setTelNr3(contRes.getString("telNr3"));
+			}
 		} catch (SQLException e) {
 			
 			e.printStackTrace();

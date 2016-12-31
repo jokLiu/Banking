@@ -109,7 +109,17 @@ public class ServerHelper extends Thread{
 	{
 		try {
 			char[] temp = (char[]) fromCustomer.readObject();
-			if(temp.equals(threeSecret))
+			
+			boolean check = true;
+			for(int i=0; i<3; i++)
+			{
+				if(temp[i] != threeSecret[i])
+				{
+					check = false;
+					break;
+				}
+			}
+			if(check)
 			{
 				System.out.println("yey");
 				toCustomer.writeObject(Requests.LogInValid);
@@ -120,8 +130,8 @@ public class ServerHelper extends Thread{
 			}
 			else
 			{
+				System.out.println("no");
 				toCustomer.writeObject(Requests.WrongSecret);
-				toCustomer.writeObject(threeBits);
 			}
 		} catch (ClassNotFoundException | IOException e) {
 			e.printStackTrace();

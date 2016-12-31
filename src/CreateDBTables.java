@@ -50,7 +50,7 @@ public class CreateDBTables {
 			
 			PreparedStatement createNameTable = conn.prepareStatement(  "CREATE TABLE Name("
 																	  + "id 		INTEGER," 
-																	  + "title 		CHAR(4) 	NOT NULL," 
+																	  + "title 		TEXT 	NOT NULL," 
 																	  + "firstName 	TEXT 		NOT NULL,"
 																	  + "surname 	TEXT		NOT NULL," 
 																	  + "FOREIGN KEY (id) REFERENCES Customer(id) " 

@@ -12,6 +12,7 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 public class SecretPasswordView extends JFrame {
@@ -104,11 +105,19 @@ public class SecretPasswordView extends JFrame {
 							switch(r)
 							{
 							case WrongSecret:
-								//TODO display GUI saying wrong
+								JOptionPane.showMessageDialog(new JFrame(),
+								"Wrong letters selected!",
+								"Error",
+								JOptionPane.WARNING_MESSAGE);
+								break;
 							case LogInValid:
-								System.out.println("valid");
-								//TODO open a normal window
+								CustomerInformation info = (CustomerInformation)fromServer.readObject();
+								double balance = (double)fromServer.readObject();
+								JFrame normalWindow = new SelectionView(toServer, fromServer, info, balance);
+								normalWindow.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+								normalWindow.setVisible(true);
 								dispose();
+								break;
 							}
 						} catch (IOException | ClassNotFoundException e1) {
 							// TODO Auto-generated catch block
