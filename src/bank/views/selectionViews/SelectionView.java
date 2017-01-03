@@ -123,7 +123,7 @@ public class SelectionView extends JFrame {
 							frame = new DepositWithdrawView(toServer, r, "Amount to withdraw: ", balance);
 							break;
 						case Transfer:
-							frame = new TransferView(toServer, balance);
+							frame = new TransferView(toServer,fromServer, balance);
 							break;
 						case Details:
 							frame = new AccountDetailsView(info);

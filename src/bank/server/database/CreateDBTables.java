@@ -61,7 +61,7 @@ public class CreateDBTables {
 			PreparedStatement createAddressTable = conn.prepareStatement(   "CREATE TABLE Address("
 																		  + "id 		INTEGER," 
 																		  + "street 	TEXT		NOT NULL," 
-																		  + "nr		 	INTEGER		NOT NULL,"
+																		  + "nr		 	TEXT		NOT NULL,"
 																		  + "city		TEXT		NOT NULL," 
 																		  + "postCode	TEXT		NOT NULL," 
 																		  + "FOREIGN KEY (id) REFERENCES Customer(id) " 

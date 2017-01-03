@@ -19,62 +19,70 @@ public class ManageDatabase {
 
 	// Adding the account
 	public synchronized void addAccount(CustomerInformation info) throws SQLException {
+		try {
+			int id = getNextId();
+			// creating customer
+			PreparedStatement singleCustomer = conn
+					.prepareStatement("BEGIN; INSERT INTO Customer (id) " + "VALUES (?); ");
+			singleCustomer.setInt(1, id);
+			singleCustomer.executeUpdate();
 
-		int id = getNextId();
-		// creating customer
-		PreparedStatement singleCustomer = conn.prepareStatement("BEGIN; INSERT INTO Customer (id) " + "VALUES (?); ");
-		singleCustomer.setInt(1, id);
-		singleCustomer.executeUpdate();
+			// creating name
+			PreparedStatement singleName = conn
+					.prepareStatement("INSERT INTO Name (id, title, firstName, surname) " + "VALUES (? , ? , ? , ?); ");
+			singleName.setInt(1, id);
+			singleName.setString(2, info.getTitle().toString());
+			singleName.setString(3, info.getFirstName());
+			singleName.setString(4, info.getSurname());
+			singleName.executeUpdate();
 
-		// creating name
-		PreparedStatement singleName = conn
-				.prepareStatement("INSERT INTO Name (id, title, firstName, surname) " + "VALUES (? , ? , ? , ?); ");
-		singleName.setInt(1, id);
-		singleName.setString(2, info.getTitle().toString());
-		singleName.setString(3, info.getFirstName());
-		singleName.setString(4, info.getSurname());
-		singleName.executeUpdate();
+			// creating address
+			PreparedStatement singleAddress = conn.prepareStatement(
+					"INSERT INTO Address (id,street, nr, city, postCode) " + "VALUES (? , ? , ? , ?, ?); ");
+			singleAddress.setInt(1, id);
+			singleAddress.setString(2, info.getStreet());
+			singleAddress.setString(3, info.getStreetNr());
+			singleAddress.setString(4, info.getCity());
+			singleAddress.setString(5, info.getPostCode());
+			singleAddress.executeUpdate();
 
-		// creating address
-		PreparedStatement singleAddress = conn.prepareStatement(
-				"INSERT INTO Address (id,street, nr, city, postCode) " + "VALUES (? , ? , ? , ?, ?); ");
-		singleAddress.setInt(1, id);
-		singleAddress.setString(2, info.getStreet());
-		singleAddress.setInt(3, info.getStreetNr());
-		singleAddress.setString(4, info.getCity());
-		singleAddress.setString(5, info.getPostCode());
-		singleAddress.executeUpdate();
+			// creating contacts
+			PreparedStatement singleContacts = conn.prepareStatement(
+					"INSERT INTO Contacts (id,email, mainTelNr, telNr2, telNr3) " + "VALUES (? , ? , ? , ?, ?); ");
+			singleContacts.setInt(1, id);
+			singleContacts.setString(2, info.getEmail());
+			singleContacts.setString(3, info.getMainTel());
+			if (info.getTelNr2() != null)
+				singleContacts.setString(4, info.getTelNr2());
+			if (info.getTelNr3() != null)
+				singleContacts.setString(5, info.getTelNr3());
+			singleContacts.executeUpdate();
 
-		// creating contacts
-		PreparedStatement singleContacts = conn.prepareStatement(
-				"INSERT INTO Contacts (id,email, mainTelNr, telNr2, telNr3) " + "VALUES (? , ? , ? , ?, ?); ");
-		singleContacts.setInt(1, id);
-		singleContacts.setString(2, info.getEmail());
-		singleContacts.setString(3, info.getMainTel());
-		if (info.getTelNr2() != null)
-			singleContacts.setString(4, info.getTelNr2());
-		if (info.getTelNr3() != null)
-			singleContacts.setString(5, info.getTelNr3());
-		singleContacts.executeUpdate();
+			// creating an account for customer
+			PreparedStatement singleAcc = conn
+					.prepareStatement("INSERT INTO Account (id,username, password, secretWord, type,balance) "
+							+ "VALUES (? , ? , ? , ?, ?, ?); ");
+			singleAcc.setInt(1, id);
+			singleAcc.setString(2, info.getUsername());
+			singleAcc.setString(3, info.getPassword());
+			singleAcc.setString(4, info.getSecretWord());
+			singleAcc.setString(5, info.getType().toString());
+			singleAcc.setInt(6, 0);
+			singleAcc.executeUpdate();
 
-		// creating an account for customer
-		PreparedStatement singleAcc = conn
-				.prepareStatement("INSERT INTO Account (id,username, password, secretWord, type,balance) "
-						+ "VALUES (? , ? , ? , ?, ?, ?); ");
-		singleAcc.setInt(1, id);
-		singleAcc.setString(2, info.getUsername());
-		singleAcc.setString(3, info.getPassword());
-		singleAcc.setString(4, info.getSecretWord());
-		singleAcc.setString(5, info.getType().toString());
-		singleAcc.setInt(6, 0);
-		singleAcc.executeUpdate();
-
-		// creating relationship
-		PreparedStatement singleAccount = conn
-				.prepareStatement("INSERT INTO CustAcc (custID,accID) " + "VALUES (? , ? ); COMMIT;");
-		singleAccount.setInt(1, id);
-		singleAccount.setInt(2, id);
-		singleAccount.executeUpdate();
+			// creating relationship
+			PreparedStatement singleAccount = conn
+					.prepareStatement("INSERT INTO CustAcc (custID,accID) " + "VALUES (? , ? ); COMMIT;");
+			singleAccount.setInt(1, id);
+			singleAccount.setInt(2, id);
+			singleAccount.executeUpdate();
+		} catch (SQLException e) {
+			
+			PreparedStatement rollback = conn
+					.prepareStatement("ROLLBACK;");
+			rollback.executeUpdate();
+			throw new SQLException();
+		}
 
 	}
 
@@ -84,12 +92,13 @@ public class ManageDatabase {
 		PreparedStatement nextIdQuery;
 		try {
 			// executing query
-			nextIdQuery = conn.prepareStatement("SELECT MAX(id) FROM Account;");
+			nextIdQuery = conn.prepareStatement("SELECT MAX(id) AS id FROM Account;");
 			ResultSet res = nextIdQuery.executeQuery();
 
 			while (res.next()) {
 				l = res.getInt("id");
 			}
+			System.out.println(l);
 		} catch (SQLException e) {
 		}
 		return l + 1;
@@ -122,7 +131,6 @@ public class ManageDatabase {
 		singleCustomer.setDouble(1, amount);
 		singleCustomer.setInt(2, id);
 		singleCustomer.setInt(3, id);
-		singleCustomer.setString(4, "Deposit");
 		java.util.Date today = new java.util.Date();
 		singleCustomer.setDate(5, new java.sql.Date(today.getTime()));
 		singleCustomer.setDouble(6, amount);
@@ -175,7 +183,7 @@ public class ManageDatabase {
 		}
 		while (addressRes.next()) {
 			info.setStreet(addressRes.getString("street"));
-			info.setStreetNr(addressRes.getInt("nr"));
+			info.setStreetNr(addressRes.getString("nr"));
 			info.setCity(addressRes.getString("city"));
 			info.setPostCode(addressRes.getString("postCode"));
 		}
@@ -223,7 +231,7 @@ public class ManageDatabase {
 		return null;
 	}
 
-	//getting the account id by the username and password
+	// getting the account id by the username and password
 	public int getId(String usr, String psw) throws SQLException {
 
 		PreparedStatement getAccount = conn
@@ -238,5 +246,19 @@ public class ManageDatabase {
 			return res.getInt("id");
 		}
 		return 0;
+	}
+
+	// return if a user exists or not
+	public boolean isUserValid(int id) throws SQLException {
+		PreparedStatement getAccount = conn.prepareStatement("SELECT id FROM Account WHERE id = ?");
+
+		getAccount.setInt(1, id);
+
+		ResultSet res = getAccount.executeQuery();
+
+		while (res.next()) {
+			return true;
+		}
+		return false;
 	}
 }

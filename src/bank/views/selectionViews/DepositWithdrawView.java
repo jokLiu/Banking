@@ -57,11 +57,19 @@ public class DepositWithdrawView extends JFrame {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				double money = Double.valueOf(amount.getText());
-				if (r.equals(Requests.Deposit)) {
+				boolean valid = true;
+				double money = 0;
+				try {
+					money = Double.valueOf(amount.getText());
+				} catch (NumberFormatException e2) {
+					valid = false;
+					errorWindow("Amount is represented by real number. \n Enter correct amount! ");
+
+				}
+				
+				if (r.equals(Requests.Deposit) && valid) {
 					if (money < 0) {
-						JOptionPane.showMessageDialog(new JFrame(), "Insufficient balance!", "Error",
-								JOptionPane.WARNING_MESSAGE);
+						errorWindow("Insufficient balance!");
 					}
 					else
 					{
@@ -75,11 +83,10 @@ public class DepositWithdrawView extends JFrame {
 						dispose();
 					}
 				}
-				else
+				else if(valid)
 				{
 					if (money > balance) {
-						JOptionPane.showMessageDialog(new JFrame(), "Insufficient balance!", "Error",
-								JOptionPane.WARNING_MESSAGE);
+						errorWindow("Insufficient balance!");
 					}
 					else
 					{
@@ -97,15 +104,11 @@ public class DepositWithdrawView extends JFrame {
 
 		});
 	}
-
-	public static void main(String[] args) {
-
-		EventQueue.invokeLater(() -> {
-			ObjectOutputStream toCustomer = null;
-			ObjectInputStream fromServer = null;
-			JFrame frame = new DepositWithdrawView(toCustomer, Requests.Deposit, "Amount to deposit: ", 128.5);
-			frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-			frame.setVisible(true);
-		});
+	
+	private void errorWindow(String msg)
+	{
+		JOptionPane.showMessageDialog(new JFrame(), msg, "Error",
+				JOptionPane.WARNING_MESSAGE);
 	}
+
 }

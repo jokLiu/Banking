@@ -8,6 +8,7 @@ import java.util.Arrays;
 import java.util.Random;
 
 import bank.server.database.ManageDatabase;
+import bank.utilities.CurrentCustomerTable;
 import bank.utilities.CustomerInformation;
 import bank.utilities.LogIn;
 import bank.utilities.Requests;
@@ -18,14 +19,17 @@ public class ServerHelper extends Thread {
 	private ManageDatabase db;
 	private ObjectInputStream fromCustomer;
 	private ObjectOutputStream toCustomer;
+	private CurrentCustomerTable customers;
 	private char[] threeSecret = new char[3];
 	private int[] threeBits = new int[3];
 	private int id;
 
-	public ServerHelper(ManageDatabase db, ObjectInputStream fromCustomer, ObjectOutputStream toCustomer) {
+	public ServerHelper(ManageDatabase db, ObjectInputStream fromCustomer, ObjectOutputStream toCustomer,
+			CurrentCustomerTable customers) {
 		this.db = db;
 		this.fromCustomer = fromCustomer;
 		this.toCustomer = toCustomer;
+		this.customers = customers;
 	}
 
 	/*
@@ -65,6 +69,11 @@ public class ServerHelper extends Thread {
 			case Exit:
 				running = !running;
 				break;
+			case UserExists:
+				System.out.println("made it");
+				userExists();
+
+				break;
 			default:
 				break;
 
@@ -85,6 +94,8 @@ public class ServerHelper extends Thread {
 			toCustomer.writeObject(Requests.RegisterSuccessful);
 		} catch (ClassNotFoundException | IOException | SQLException e) {
 			try {
+				// e.printStackTrace();
+				System.out.println("lol");
 				toCustomer.writeObject(Requests.RegisterUnsuccessful);
 			} catch (IOException e1) {
 
@@ -151,6 +162,7 @@ public class ServerHelper extends Thread {
 				toCustomer.writeObject(Requests.LogInValid);
 				CustomerInformation info = db.getInformation(id);
 				info.setId(id);
+				customers.addCustomer(id, this);
 				toCustomer.writeObject(info); // ifnormation
 				toCustomer.writeObject(db.getBalance(id)); // double
 			} else {
@@ -167,44 +179,82 @@ public class ServerHelper extends Thread {
 	// When deposit and withdraw money request is sent
 	private void depositAndWithdraw(Requests r) {
 		try {
-			//receivng the amount to be deposited or withdrawn
+			// receivng the amount to be deposited or withdrawn
 			double deposit = (double) fromCustomer.readObject();
-			
-			//checking what request to fullfill
+
+			// checking what request to fullfill
 			if (r.equals(Requests.Deposit))
 				db.depositMoney(id, deposit);
 			else
 				db.withdrawMoney(id, deposit);
-			
-			//update the customer
-			toCustomer.writeObject(Requests.Update);
-			toCustomer.writeObject(db.getBalance(id));
+
+			// update the customer
+			for (ServerHelper h : customers.getHelper(id))
+				h.updateCustomer();
+			updateCustomer();
 		} catch (ClassNotFoundException | IOException e) {
-			//TODO
+			// TODO
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
 
-
-	//When transfer request is received
+	// When transfer request is received
 	private void transfer() {
 		try {
-			//getting recipient id
+			// getting recipient id
 			int toId = (int) fromCustomer.readObject();
-			
-			//getting the amount to be transferred
+
+			// getting the amount to be transferred
 			double amount = (double) fromCustomer.readObject();
-			
-			//updating the database
+
+			// updating the database
 			db.transfer(id, toId, amount);
-			
-			//updating the customer
+
+			// updating the customer
+			updateCustomer();
+			if (customers.exists(toId)) {
+				for (ServerHelper h : customers.getHelper(toId))
+					h.updateCustomer();
+			}
+		} catch (ClassNotFoundException | IOException e) {
+			// TODO
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	public void userExists() {
+		try {
+			// update the customer
+			System.out.println("l");
+			int toId = (int) fromCustomer.readObject();
+			System.out.println(toId);
+			boolean check = db.isUserValid(toId);
+			System.out.println(check);
+			toCustomer.writeObject(Requests.UserExists);
+			toCustomer.writeObject(check);
+		} catch (IOException e) {
+			// TODO
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	// updating another customer which is currently loged in
+	public void updateCustomer() {
+		try {
 			toCustomer.writeObject(Requests.Update);
 			toCustomer.writeObject(db.getBalance(id));
-		} catch (ClassNotFoundException | IOException e) {
-			//TODO
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

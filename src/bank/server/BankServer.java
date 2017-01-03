@@ -10,6 +10,7 @@ import java.sql.Connection;
 import bank.server.database.Connect;
 import bank.server.database.CreateDBTables;
 import bank.server.database.ManageDatabase;
+import bank.utilities.CurrentCustomerTable;
 import bank.utilities.Port;
 public class BankServer {
 
@@ -40,6 +41,9 @@ public class BankServer {
 		//Creating for managing database queries 
 		ManageDatabase database = new ManageDatabase(conn);
 		
+		
+		//creating table for online customers
+		CurrentCustomerTable customers = new CurrentCustomerTable();
 		try {
 			while (true) {
 
@@ -51,7 +55,7 @@ public class BankServer {
 				ObjectOutputStream writeToClient = new ObjectOutputStream(socket.getOutputStream());
 				
 				//Staring a thread to take care of a single customer connection
-				(new ServerHelper(database, readFromClient, writeToClient)).start();
+				(new ServerHelper(database, readFromClient, writeToClient, customers)).start();
 			}
 			
 		} catch (IOException e) {

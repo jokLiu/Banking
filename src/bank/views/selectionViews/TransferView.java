@@ -1,6 +1,6 @@
 package bank.views.selectionViews;
+
 import java.awt.BorderLayout;
-import java.awt.EventQueue;
 import java.awt.GridLayout;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -17,16 +17,18 @@ import bank.utilities.Requests;
 
 public class TransferView extends JFrame {
 	private ObjectOutputStream toServer;
+	private ObjectInputStream fromServer;
 	private JTextField amount;
 	private JTextField accId;
 	private JButton transfer;
 	private JButton cancel;
 	private double balance;
 
-	public TransferView(ObjectOutputStream toServer, double balance) {
+	public TransferView(ObjectOutputStream toServer, ObjectInputStream fromServer, double balance) {
 		super("Transfer Window");
 
 		this.toServer = toServer;
+		this.fromServer = fromServer;
 		this.balance = balance;
 		JPanel panel = new JPanel(new GridLayout(4, 2, 10, 10));
 		panel.add(new JLabel("Balance: "));
@@ -54,13 +56,49 @@ public class TransferView extends JFrame {
 
 	private void addTransferListener() {
 		transfer.addActionListener(e -> {
-			int id = Integer.valueOf(accId.getText());
-			double money = Integer.valueOf(amount.getText());
-			//TODO check if id exists
-			if (money > balance) {
-				JOptionPane.showMessageDialog(new JFrame(), "Insufficient balance!", "Error",
-						JOptionPane.WARNING_MESSAGE);
-			} else {
+
+			boolean valid = true;
+			int id = 0;
+			double money = 0;
+
+			try {
+				id = Integer.valueOf(accId.getText());
+			} catch (NumberFormatException e2) {
+				valid = false;
+				errorWindow("Account id is represented by integer. \n Enter correct id! ");
+
+			}
+
+			try {
+				money = Double.valueOf(amount.getText());
+			} catch (NumberFormatException e2) {
+				valid = false;
+				errorWindow("Amount is represented by real number. \n Enter correct amount! ");
+
+			}
+
+			boolean recipientExists = false;
+			if(valid)
+			{
+				try {
+					toServer.writeObject(Requests.UserExists);
+					toServer.writeObject(id);
+					Thread.sleep(100);
+					System.out.println("view");
+					recipientExists = (boolean) fromServer.readObject();
+					System.out.println("view2");
+				} catch (Exception e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			}
+			
+			if(!recipientExists)
+				errorWindow("Recipient does not exist! \n Please check ID! ");
+			
+			if (recipientExists && valid && money > balance ) {
+				errorWindow("Insufficient balance!");
+			} else if( recipientExists && valid){
 				try {
 					toServer.writeObject(Requests.Transfer);
 					toServer.writeObject(id);
@@ -71,18 +109,13 @@ public class TransferView extends JFrame {
 				}
 				dispose();
 			}
+
 		});
 
 	}
 
-	public static void main(String[] args) {
-
-		EventQueue.invokeLater(() -> {
-			ObjectOutputStream toCustomer = null;
-			ObjectInputStream fromServer = null;
-			JFrame frame = new TransferView(toCustomer, 128.5);
-			frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-			frame.setVisible(true);
-		});
+	private void errorWindow(String msg) {
+		JOptionPane.showMessageDialog(new JFrame(), msg, "Error", JOptionPane.WARNING_MESSAGE);
 	}
+
 }

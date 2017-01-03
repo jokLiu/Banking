@@ -14,7 +14,7 @@ public class CustomerInformation implements Serializable{
 	
 	//address
 	private String street;
-	private int streetNr;
+	private String streetNr;
 	private String city;
 	private String postCode;
 	
@@ -79,11 +79,11 @@ public class CustomerInformation implements Serializable{
 		this.street = street;
 	}
 
-	public int getStreetNr() {
+	public String getStreetNr() {
 		return streetNr;
 	}
 
-	public void setStreetNr(int streetNr) {
+	public void setStreetNr(String streetNr) {
 		this.streetNr = streetNr;
 	}
 
