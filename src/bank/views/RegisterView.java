@@ -311,4 +311,6 @@ public class RegisterView extends JFrame {
 	private void errorWindow(String msg) {
 		JOptionPane.showMessageDialog(new JFrame(), msg, "Error", JOptionPane.WARNING_MESSAGE);
 	}
+	
+	
 }

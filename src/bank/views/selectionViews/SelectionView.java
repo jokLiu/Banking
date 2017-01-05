@@ -69,7 +69,7 @@ public class SelectionView extends JFrame {
 		panel.add(details);
 
 		history = new JButton("Payment history");
-		// TODO Sort out the history
+		addListener(history, Requests.ActionHistory);
 		panel.add(history);
 
 		exit = new JButton("Exit");
@@ -127,6 +127,14 @@ public class SelectionView extends JFrame {
 							break;
 						case Details:
 							frame = new AccountDetailsView(info);
+							break;
+						case ActionHistory:
+							try {
+								toServer.writeObject(r);
+							} catch (Exception e1) {
+								// TODO Auto-generated catch block
+								e1.printStackTrace();
+							}
 							break;
 						}
 

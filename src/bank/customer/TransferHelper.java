@@ -1,10 +1,16 @@
 package bank.customer;
 
+import java.awt.EventQueue;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.ArrayList;
+
+import javax.swing.JFrame;
 
 import bank.utilities.Requests;
+import bank.utilities.Transaction;
+import bank.views.selectionViews.PaymentHistory;
 import bank.views.selectionViews.SelectionView;
 
 public class TransferHelper extends Thread {
@@ -29,6 +35,19 @@ public class TransferHelper extends Thread {
 					double balance = (double) fromServer.readObject();
 					view.balance = balance;
 					view.upd();
+				}
+				else if(r.equals(Requests.ActionHistory))
+				{
+					ArrayList<Transaction> deposits = (ArrayList<Transaction>) fromServer.readObject();
+					ArrayList<Transaction> transfers = (ArrayList<Transaction>) fromServer.readObject();
+				
+					EventQueue.invokeLater(() -> {
+						
+						JFrame frame = new PaymentHistory(deposits, transfers);
+						frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+						frame.setVisible(true);
+						frame.pack();
+					});
 				}
 				else Thread.sleep(100);
 

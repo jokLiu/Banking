@@ -4,9 +4,11 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 
 import bank.utilities.CustomerInformation;
 import bank.utilities.Titles;
+import bank.utilities.Transaction;
 
 //class for managing the database (dealing with requests)
 public class ManageDatabase {
@@ -260,5 +262,51 @@ public class ManageDatabase {
 			return true;
 		}
 		return false;
+	}
+	
+	public ArrayList<Transaction> getDepositsAndWithdrawals(int id) throws SQLException
+	{
+		
+		ArrayList<Transaction> info = new ArrayList<>();
+		
+		PreparedStatement getTransactions = conn.prepareStatement("SELECT fromid, description, timestamp, amount  FROM Deposit WHERE fromid = ?");
+		getTransactions.setInt(1, id);
+		ResultSet transRes = getTransactions.executeQuery();
+		
+		while(transRes.next())
+		{
+			Transaction temp = new Transaction();
+			temp.setCustID(transRes.getInt("fromid"));
+			temp.setDesc(transRes.getString("description"));
+			temp.setTimeStamp(transRes.getDate("timestamp"));
+			temp.setAmount(transRes.getDouble("amount"));
+			info.add(temp);
+		}
+		
+	
+		return info;
+	
+	}
+	
+	public ArrayList<Transaction> getTransfers(int id ) throws SQLException
+	{
+		ArrayList<Transaction> info = new ArrayList<>();
+		
+		PreparedStatement getTransfers = conn.prepareStatement("SELECT fromid, toid, description, timestamp, amount  FROM Transfers WHERE fromid = ? OR toid = ?");
+		getTransfers.setInt(1, id);
+		getTransfers.setInt(2, id);
+		ResultSet transfersRes = getTransfers.executeQuery();
+		
+		while(transfersRes.next())
+		{
+			Transaction temp = new Transaction();
+			temp.setCustID(transfersRes.getInt("fromid"));
+			temp.setToID(transfersRes.getInt("toid"));
+			temp.setDesc(transfersRes.getString("description"));
+			temp.setTimeStamp(transfersRes.getDate("timestamp"));
+			temp.setAmount(transfersRes.getDouble("amount"));
+			info.add(temp);
+		}
+		return info;
 	}
 }

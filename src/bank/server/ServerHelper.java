@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
 
@@ -12,6 +13,7 @@ import bank.utilities.CurrentCustomerTable;
 import bank.utilities.CustomerInformation;
 import bank.utilities.LogIn;
 import bank.utilities.Requests;
+import bank.utilities.Transaction;
 
 //Thread for dealing with a single customer
 public class ServerHelper extends Thread {
@@ -56,6 +58,9 @@ public class ServerHelper extends Thread {
 				break;
 			case Secret:
 				secret();
+				break;
+			case ActionHistory:
+				actionHistory();
 				break;
 			case Deposit:
 				depositAndWithdraw(temp);
@@ -213,9 +218,13 @@ public class ServerHelper extends Thread {
 			db.transfer(id, toId, amount);
 
 			// updating the customer
-			updateCustomer();
 			if (customers.exists(toId)) {
 				for (ServerHelper h : customers.getHelper(toId))
+					h.updateCustomer();
+			}
+			if(customers.exists(id))
+			{
+				for (ServerHelper h : customers.getHelper(id))
 					h.updateCustomer();
 			}
 		} catch (ClassNotFoundException | IOException e) {
@@ -225,8 +234,27 @@ public class ServerHelper extends Thread {
 			e.printStackTrace();
 		}
 	}
+	
+	
+	private void actionHistory()
+	{
+		try {
+			// update the customer
+			
+			ArrayList<Transaction> deposits = db.getDepositsAndWithdrawals(id);
+			ArrayList<Transaction> transfers = db.getTransfers(id);
+			toCustomer.writeObject(Requests.ActionHistory);
+			toCustomer.writeObject(deposits);
+			toCustomer.writeObject(transfers);
+		} catch (IOException e) {
+			// TODO
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} 
+	}
 
-	public void userExists() {
+	private void userExists() {
 		try {
 			// update the customer
 			System.out.println("l");
