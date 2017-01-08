@@ -264,6 +264,7 @@ public class ManageDatabase {
 		return false;
 	}
 	
+	//returns the deposit of all the deposits and withrawals
 	public ArrayList<Transaction> getDepositsAndWithdrawals(int id) throws SQLException
 	{
 		
@@ -288,6 +289,7 @@ public class ManageDatabase {
 	
 	}
 	
+	//returns all the transfers
 	public ArrayList<Transaction> getTransfers(int id ) throws SQLException
 	{
 		ArrayList<Transaction> info = new ArrayList<>();

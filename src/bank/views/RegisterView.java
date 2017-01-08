@@ -23,28 +23,75 @@ import bank.utilities.CustomerInformation;
 import bank.utilities.Requests;
 import bank.utilities.Titles;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class RegisterView.
+ */
 public class RegisterView extends JFrame {
 
+	/** The to server. */
 	private ObjectOutputStream toServer;
+	
+	/** The from server. */
 	private ObjectInputStream fromServer;
+	
+	/** The title. */
 	private JComboBox<Titles> title;
+	
+	/** The name. */
 	private JTextField fName;
+	
+	/** The surname. */
 	private JTextField surname;
+	
+	/** The street. */
 	private JTextField street;
+	
+	/** The st nr. */
 	private JTextField stNr;
+	
+	/** The city. */
 	private JTextField city;
+	
+	/** The post code. */
 	private JTextField postCode;
+	
+	/** The email. */
 	private JTextField email;
+	
+	/** The main tel. */
 	private JTextField mainTel;
+	
+	/** The tel2. */
 	private JTextField tel2;
+	
+	/** The tel3. */
 	private JTextField tel3;
+	
+	/** The usr. */
 	private JTextField usr;
+	
+	/** The psw. */
 	private JPasswordField psw;
+	
+	/** The secret. */
 	private JPasswordField secret;
+	
+	/** The type. */
 	private JComboBox<CardType> type;
+	
+	/** The submit. */
 	private JButton submit;
+	
+	/** The exit. */
 	private JButton exit;
 
+	/**
+	 * Instantiates a new register view.
+	 *
+	 * @param toServer the to server
+	 * @param fromServer the from server
+	 */
 	public RegisterView(ObjectOutputStream toServer, ObjectInputStream fromServer) {
 		super("Registration");
 
@@ -149,6 +196,9 @@ public class RegisterView extends JFrame {
 		pack();
 	}
 
+	/**
+	 * Submit form.
+	 */
 	private void submitForm() {
 		submit.addActionListener(new ActionListener() {
 
@@ -257,6 +307,13 @@ public class RegisterView extends JFrame {
 		});
 	}
 	
+	/**
+	 * Check if JText field is empty and set colour accordingly
+	 *
+	 * @param var String variable
+	 * @param field the field
+	 * @param isBlank the is blank
+	 */
 	private void check(String var, JTextField field, boolean isBlank)
 	{
 		if (var.isEmpty())
@@ -270,18 +327,34 @@ public class RegisterView extends JFrame {
 		}
 	}
 	
+	/**
+	 * Sets the white color
+	 *
+	 * @param field the new white
+	 */
 	private void setWhite(JTextField field)
 	{
 		field.setForeground(Color.BLACK);
 		field.setBackground(Color.WHITE);
 	}
 	
+	/**
+	 * Sets the red color
+	 *
+	 * @param field the new red
+	 */
 	private void setRed(JTextField field)
 	{
 		field.setForeground(Color.WHITE);
 		field.setBackground(Color.RED);
 	}
 
+	/**
+	 * Checks if password is strong
+	 *
+	 * @param password the password
+	 * @return true, if is strong
+	 */
 	private boolean isStrong(String password) {
 		boolean valid = true;
 
@@ -293,6 +366,12 @@ public class RegisterView extends JFrame {
 
 	}
 
+	/**
+	 * Checks if is good secret.
+	 *
+	 * @param secretW the secret word
+	 * @return true, if is good secret
+	 */
 	private boolean isGoodSecret(String secretW) {
 		boolean valid = true;
 
@@ -308,6 +387,11 @@ public class RegisterView extends JFrame {
 		return valid;
 	}
 
+	/**
+	 * Error window.
+	 *
+	 * @param msg the msg
+	 */
 	private void errorWindow(String msg) {
 		JOptionPane.showMessageDialog(new JFrame(), msg, "Error", JOptionPane.WARNING_MESSAGE);
 	}

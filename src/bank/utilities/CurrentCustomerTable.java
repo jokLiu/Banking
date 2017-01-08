@@ -10,11 +10,13 @@ import bank.server.ServerHelper;
 public class CurrentCustomerTable {
 	Map<Integer, ArrayList<ServerHelper>> custTable = new HashMap<>();
 	
-	public CurrentCustomerTable()
-	{
-		
-	}
-
+	
+	/**
+	 * Adds the customer to the customer table
+	 *
+	 * @param id the id
+	 * @param helper the helper
+	 */
 	public void addCustomer(int id, ServerHelper helper)
 	{
 		if(custTable.containsKey(id))
@@ -32,18 +34,35 @@ public class CurrentCustomerTable {
 			
 	}
 	
+	/**
+	 * Delete customer from the table when exits.
+	 *
+	 * @param id the id
+	 */
 	public void deleteCustomer(int id)
 	{
-		//TODO fix the value
 		custTable.remove(id);
 	}
 	
+	
+	/**
+	 * Gets the helper.
+	 *
+	 * @param id the id
+	 * @return the helper
+	 */
 	public ArrayList<ServerHelper> getHelper(int id)
 	{
 		
 		return custTable.get(id);
 	}
 
+	/**
+	 *Checks if the customer is logged on.
+	 *
+	 * @param id the id
+	 * @return true, if successful
+	 */
 	public boolean exists(int id)
 	{
 		return custTable.containsKey(id);

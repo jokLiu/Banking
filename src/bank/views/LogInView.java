@@ -20,16 +20,37 @@ import javax.swing.SwingConstants;
 import bank.utilities.LogIn;
 import bank.utilities.Requests;
 
-//class for displaying the 
+/**
+ * The Class class for displaying the  Log in windows View.
+ */
+
 public class LogInView extends JFrame{
 
 	
+	/** The username. */
 	private JTextField username;
+	
+	/** The password. */
 	private JPasswordField password;
+	
+	/** The log in. */
 	private JButton logIn;
+	
+	/** The register. */
 	private JButton register;
+	
+	/** The to server. */
 	private ObjectOutputStream toServer;
+	
+	/** The from server. */
 	private ObjectInputStream fromServer;
+	
+	/**
+	 * Instantiates a new log in view.
+	 *
+	 * @param toServer the to server
+	 * @param fromServer the from server
+	 */
 	public LogInView(ObjectOutputStream toServer, ObjectInputStream fromServer)
 	{
 		super("Bank Log In");
@@ -65,6 +86,9 @@ public class LogInView extends JFrame{
 	
 	
 	
+	/**
+	 * Adds the log in action.
+	 */
 	private void addLogInAction()
 	{
 		logIn.addActionListener(new ActionListener(){
@@ -108,6 +132,9 @@ public class LogInView extends JFrame{
 	}
 	
 	
+	/**
+	 * Adds the register listener.
+	 */
 	private void addRegisterListener()
 	{
 		register.addActionListener(new ActionListener(){

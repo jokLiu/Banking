@@ -11,11 +11,20 @@ import javax.swing.JTextField;
 
 import bank.utilities.CustomerInformation;
 
+/**
+ * The Class AccountDetailsView.
+ */
 public class AccountDetailsView extends JFrame{
 
+	/** The info. */
 	private CustomerInformation info;
 	
 	
+	/**
+	 * Instantiates a new account details view.
+	 *
+	 * @param info the info
+	 */
 	public AccountDetailsView(CustomerInformation info)
 	{
 		super("Customer Details");
@@ -58,6 +67,12 @@ public class AccountDetailsView extends JFrame{
 		
 	}
 	
+	/**
+	 * Adds the component to the  panel
+	 *
+	 * @param mainPanel the main panel
+	 * @param field the field
+	 */
 	private void addComponent(JPanel mainPanel, JTextField field) {
 		field.setEnabled(false);
 		field.setDisabledTextColor(Color.BLACK);

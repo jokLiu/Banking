@@ -17,14 +17,35 @@ import javax.swing.JTextField;
 
 import bank.utilities.Requests;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class DepositWithdrawView.
+ */
 public class DepositWithdrawView extends JFrame {
 
+	/** The to server. */
 	private ObjectOutputStream toServer;
+	
+	/** The amount. */
 	private JTextField amount;
+	
+	/** The deposit. */
 	private JButton deposit;
+	
+	/** The cancel. */
 	private JButton cancel;
+	
+	/** The balance. */
 	private double balance;
 
+	/**
+	 * Instantiates a new deposit withdraw view.
+	 *
+	 * @param toServer the to server
+	 * @param r the request
+	 * @param reason the reason
+	 * @param balance the balance
+	 */
 	public DepositWithdrawView(ObjectOutputStream toServer,  Requests r, String reason,
 			double balance) {
 		super(String.valueOf(r));
@@ -52,6 +73,11 @@ public class DepositWithdrawView extends JFrame {
 
 	}
 
+	/**
+	 * Adds the deposit listener.
+	 *
+	 * @param r the request
+	 */
 	private void addDepositListener(Requests r) {
 		deposit.addActionListener(new ActionListener() {
 
@@ -105,6 +131,11 @@ public class DepositWithdrawView extends JFrame {
 		});
 	}
 	
+	/**
+	 * Error window.
+	 *
+	 * @param msg the msg
+	 */
 	private void errorWindow(String msg)
 	{
 		JOptionPane.showMessageDialog(new JFrame(), msg, "Error",

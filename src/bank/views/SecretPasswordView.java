@@ -19,16 +19,36 @@ import bank.utilities.CustomerInformation;
 import bank.utilities.Requests;
 import bank.views.selectionViews.SelectionView;
 
+/**
+ * The Class SecretPasswordView.
+ */
 public class SecretPasswordView extends JFrame {
 	
+	/** The first. */
 	private JComboBox<String> first;
+	
+	/** The second. */
 	private JComboBox<String> second;
+	
+	/** The third. */
 	private JComboBox<String> third;
+	
+	/** The login. */
 	private JButton login;
 	
+	/** The to server. */
 	private ObjectOutputStream toServer;
+	
+	/** The from server. */
 	private ObjectInputStream fromServer; 
 	
+	/**
+	 * Instantiates a new secret password view.
+	 *
+	 * @param toServer the to server
+	 * @param fromServer the from server
+	 * @param elem the elem
+	 */
 	public SecretPasswordView(ObjectOutputStream toServer, ObjectInputStream fromServer, int[] elem)
 	{
 		super("Secret Word Verification");
@@ -89,6 +109,9 @@ public class SecretPasswordView extends JFrame {
 		
 	}
 	
+	/**
+	 * Adds the listener log in.
+	 */
 	private void addListenerLogIn()
 	{
 		login.addActionListener(new ActionListener()
