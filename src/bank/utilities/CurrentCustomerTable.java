@@ -6,13 +6,17 @@ import java.util.Map;
 
 import bank.server.ServerHelper;
 
-//class for storing all currently loged in customer
+/**
+ * The Class CurrentCustomerTable for storing all currently loged in customer.
+ */
 public class CurrentCustomerTable {
+	
+	/** The customer table. */
 	Map<Integer, ArrayList<ServerHelper>> custTable = new HashMap<>();
 	
 	
 	/**
-	 * Adds the customer to the customer table
+	 * Adds the customer to the customer table.
 	 *
 	 * @param id the id
 	 * @param helper the helper

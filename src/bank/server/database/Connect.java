@@ -4,15 +4,28 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
-//class for connecting to postgresql database
+/**
+ * The Class Connect for connecting to postgresql database.
+ */
 public class Connect {
 
+	/** The connection. */
 	private Connection conn;
 
+	/**
+	 * Instantiates a new connect.
+	 *
+	 * @param conn the connection
+	 */
 	public Connect(Connection conn) {
 		this.conn = conn;
 	}
 
+	/**
+	 * Gets the connection.
+	 *
+	 * @return the connection
+	 */
 	//method for making connection and getting the connection object
 	public Connection getConnection() {
 		registerDriver();

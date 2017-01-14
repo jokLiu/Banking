@@ -12,12 +12,25 @@ import javax.swing.table.DefaultTableModel;
 
 import bank.utilities.Transaction;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class PaymentHistory.
+ */
 public class PaymentHistory extends JFrame {
 	
+	/** The deposits. */
 	private ArrayList<Transaction> deposits;
+	
+	/** The transfers. */
 	private ArrayList<Transaction> transfers;
 	
 	
+	/**
+	 * Instantiates a new payment history.
+	 *
+	 * @param deposits the deposits
+	 * @param transfers the transfers
+	 */
 	public PaymentHistory(ArrayList<Transaction> deposits,ArrayList<Transaction> transfers)
 	{
 		super("Transaction History");
@@ -42,7 +55,9 @@ public class PaymentHistory extends JFrame {
 		
 		JButton exit = new JButton("Exit");
 		exit.addActionListener(e -> dispose());
-		panel.add(exit, BorderLayout.SOUTH);
+		JPanel temp = new JPanel();
+		temp.add(exit, BorderLayout.CENTER);
+		panel.add(temp, BorderLayout.SOUTH);
 		
 		
 		add(panel);
@@ -51,6 +66,12 @@ public class PaymentHistory extends JFrame {
 		
 	}
 	
+	/**
+	 * Gets the deposits.
+	 *
+	 * @param data the data
+	 * @return the deposits
+	 */
 	private String[][] getDeposits(ArrayList<Transaction> data)
 	{
 		String[][] info = new String[data.size()][5];

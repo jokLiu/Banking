@@ -12,8 +12,17 @@ import bank.server.database.CreateDBTables;
 import bank.server.database.ManageDatabase;
 import bank.utilities.CurrentCustomerTable;
 import bank.utilities.Port;
+
+/**
+ * The Class BankServer.
+ */
 public class BankServer {
 
+	/**
+	 * The main method.
+	 *
+	 * @param args the arguments
+	 */
 	public static void main(String[] args) {
 
 		// open the server socket

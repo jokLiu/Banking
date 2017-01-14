@@ -1,4 +1,5 @@
 package bank.views.selectionViews;
+
 import java.awt.BorderLayout;
 import java.awt.EventQueue;
 import java.awt.GridLayout;
@@ -25,29 +26,32 @@ public class DepositWithdrawView extends JFrame {
 
 	/** The to server. */
 	private ObjectOutputStream toServer;
-	
+
 	/** The amount. */
 	private JTextField amount;
-	
+
 	/** The deposit. */
 	private JButton deposit;
-	
+
 	/** The cancel. */
 	private JButton cancel;
-	
+
 	/** The balance. */
 	private double balance;
 
 	/**
 	 * Instantiates a new deposit withdraw view.
 	 *
-	 * @param toServer the to server
-	 * @param r the request
-	 * @param reason the reason
-	 * @param balance the balance
+	 * @param toServer
+	 *            the to server
+	 * @param r
+	 *            the request
+	 * @param reason
+	 *            the reason
+	 * @param balance
+	 *            the balance
 	 */
-	public DepositWithdrawView(ObjectOutputStream toServer,  Requests r, String reason,
-			double balance) {
+	public DepositWithdrawView(ObjectOutputStream toServer, Requests r, String reason, double balance) {
 		super(String.valueOf(r));
 
 		this.toServer = toServer;
@@ -76,7 +80,8 @@ public class DepositWithdrawView extends JFrame {
 	/**
 	 * Adds the deposit listener.
 	 *
-	 * @param r the request
+	 * @param r
+	 *            the request
 	 */
 	private void addDepositListener(Requests r) {
 		deposit.addActionListener(new ActionListener() {
@@ -92,54 +97,47 @@ public class DepositWithdrawView extends JFrame {
 					errorWindow("Amount is represented by real number. \n Enter correct amount! ");
 
 				}
-				
+
 				if (r.equals(Requests.Deposit) && valid) {
 					if (money < 0) {
 						errorWindow("Insufficient balance!");
-					}
-					else
-					{
+					} else {
 						try {
 							toServer.writeObject(r);
 							toServer.writeObject(money);
 						} catch (IOException e1) {
-							// TODO require password
-							e1.printStackTrace();
+							errorWindow("Unable to make a deposit \n Please try again!");
+						} finally {
+							dispose();
 						}
-						dispose();
 					}
-				}
-				else if(valid)
-				{
+				} else if (valid) {
 					if (money > balance) {
 						errorWindow("Insufficient balance!");
-					}
-					else
-					{
+					} else {
 						try {
 							toServer.writeObject(r);
 							toServer.writeObject(money);
 						} catch (IOException e1) {
-							// TODO require password
-							e1.printStackTrace();
+							errorWindow("Unable to withdrawy money \n Please try again!");
+						} finally {
+							dispose();
 						}
-						dispose();
 					}
 				}
 			}
 
 		});
 	}
-	
+
 	/**
 	 * Error window.
 	 *
-	 * @param msg the msg
+	 * @param msg
+	 *            the message
 	 */
-	private void errorWindow(String msg)
-	{
-		JOptionPane.showMessageDialog(new JFrame(), msg, "Error",
-				JOptionPane.WARNING_MESSAGE);
+	private void errorWindow(String msg) {
+		JOptionPane.showMessageDialog(new JFrame(), msg, "Error", JOptionPane.WARNING_MESSAGE);
 	}
 
 }

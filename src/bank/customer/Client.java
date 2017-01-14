@@ -11,8 +11,17 @@ import javax.swing.JFrame;
 import bank.utilities.Port;
 import bank.views.LogInView;
 
-//main class for Customer
+/**
+ * The Class Client (Customer)
+ */
 public class Client {
+
+	/**
+	 * The main method.
+	 *
+	 * @param args
+	 *            the arguments
+	 */
 	public static void main(String[] args) {
 
 		// Check correct usage:
@@ -39,8 +48,7 @@ public class Client {
 			System.err.println("Server is not running");
 			System.exit(1);
 		}
-		
-		
+
 		ObjectOutputStream toServer2 = toServer;
 		ObjectInputStream fromServer2 = fromServer;
 		EventQueue.invokeLater(() -> {
@@ -48,26 +56,6 @@ public class Client {
 			frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 			frame.setVisible(true);
 		});
-
-		
-		Thread helper = new CustomerHelper(fromServer, toServer);
-		helper.start();
-
-		//wait for thread to finish
-		try {
-			helper.join();
-		} catch (InterruptedException e1) {
-
-		}
-
-		// closing the streams and the socket with the server
-		try {
-			toServer.close();
-			fromServer.close();
-			socket.close();
-		} catch (IOException e) {
-
-		}
 
 	}
 }

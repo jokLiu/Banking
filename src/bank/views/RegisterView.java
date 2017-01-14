@@ -295,12 +295,9 @@ public class RegisterView extends JFrame {
 							dispose();
 							break;
 						}
-					} catch (IOException e1) {
-						e1.printStackTrace();
-					} catch (ClassNotFoundException e1) {
-
-						e1.printStackTrace();
-					}
+					} catch (IOException | ClassNotFoundException e1) {
+						System.exit(1);
+					} 
 				}
 			}
 

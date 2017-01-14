@@ -58,11 +58,15 @@ public class AccountDetailsView extends JFrame{
 		panel.add(new JLabel("Main tel nr: "));
 		addComponent(panel, new JTextField(info.getMainTel()));
 		
+		add(panel);
+		
 		JButton done = new JButton("Done");
 		done.addActionListener(e -> dispose());
 		
-		add(panel);
-		add(done, BorderLayout.SOUTH);
+		JPanel temp = new JPanel();
+		temp.add(done, BorderLayout.CENTER);
+	
+		add(temp, BorderLayout.SOUTH);
 		pack();
 		
 	}

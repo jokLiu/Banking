@@ -99,8 +99,29 @@ public class SecretPasswordView extends JFrame {
 		
 		panel.add(panelmain, BorderLayout.CENTER);
 		
+		
 		login = new JButton("Log In");
-		panel.add(login, BorderLayout.AFTER_LAST_LINE);
+		JButton exit = new JButton("Exit");
+		exit.addActionListener(e -> {
+			try {
+				toServer.writeObject(Requests.Exit);
+				toServer.close();
+				fromServer.close();
+			} catch (Exception e1) {
+				
+			}
+			finally
+			{
+				System.exit(1);
+			}
+			
+		});
+		
+		JPanel last = new JPanel(new GridLayout(1,2, 7, 7));
+		last.add(login);
+		last.add(exit);
+
+		panel.add(last, BorderLayout.AFTER_LAST_LINE);
 		addListenerLogIn();
 		
 		add(panel);
@@ -147,8 +168,7 @@ public class SecretPasswordView extends JFrame {
 								break;
 							}
 						} catch (IOException | ClassNotFoundException e1) {
-							// TODO Auto-generated catch block
-							e1.printStackTrace();
+							System.exit(1);
 						}
 						
 					}

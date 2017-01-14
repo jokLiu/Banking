@@ -115,11 +115,15 @@ public class SelectionView extends JFrame {
 		exit.addActionListener(e -> {
 			try {
 				toServer.writeObject(Requests.Exit);
+				toServer.close();
+				fromServer.close();
 			} catch (Exception e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
+				
 			}
-			System.exit(1);
+			finally
+			{
+				System.exit(1);
+			}
 		});
 
 		Thread t = new TransferHelper(fromServer, toServer, this);
@@ -132,7 +136,7 @@ public class SelectionView extends JFrame {
 	}
 
 	/**
-	 * Upd.
+	 * Update.
 	 */
 	public void upd() {
 
@@ -186,8 +190,7 @@ public class SelectionView extends JFrame {
 					}
 
 				} catch (Exception e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
+					
 				}
 			}
 

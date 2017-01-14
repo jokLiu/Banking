@@ -3,10 +3,19 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
-//class for deleting the old tables and creating the new (fresh) tables
+/**
+ * The Class CreateDBTables  for deleting the old tables and creating the new (fresh) tables.
+ */
 public class CreateDBTables {
+	
+	/** The connection. */
 	private Connection conn;
 	
+	/**
+	 * Instantiates a new creates the database tables.
+	 *
+	 * @param conn the connection
+	 */
 	public CreateDBTables(Connection conn)
 	{
 		this.conn= conn;
@@ -14,7 +23,7 @@ public class CreateDBTables {
 	}
 
 	/**
-	 * Delete previous tables from the database (cleaning the database)
+	 * Delete previous tables from the database (cleaning the database).
 	 */
 	public void deleteTables() {
 		System.out.println("Deleting all the tables");

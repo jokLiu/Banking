@@ -15,15 +15,42 @@ import javax.swing.JTextField;
 
 import bank.utilities.Requests;
 
+/**
+ * The Class TransferView.
+ */
 public class TransferView extends JFrame {
+
+	/** The to server. */
 	private ObjectOutputStream toServer;
+
+	/** The from server. */
 	private ObjectInputStream fromServer;
+
+	/** The amount. */
 	private JTextField amount;
+
+	/** The acc id. */
 	private JTextField accId;
+
+	/** The transfer. */
 	private JButton transfer;
+
+	/** The cancel. */
 	private JButton cancel;
+
+	/** The balance. */
 	private double balance;
 
+	/**
+	 * Instantiates a new transfer view.
+	 *
+	 * @param toServer
+	 *            the to server
+	 * @param fromServer
+	 *            the from server
+	 * @param balance
+	 *            the balance
+	 */
 	public TransferView(ObjectOutputStream toServer, ObjectInputStream fromServer, double balance) {
 		super("Transfer Window");
 
@@ -54,6 +81,9 @@ public class TransferView extends JFrame {
 
 	}
 
+	/**
+	 * Adds the transfer listener.
+	 */
 	private void addTransferListener() {
 		transfer.addActionListener(e -> {
 
@@ -78,42 +108,44 @@ public class TransferView extends JFrame {
 			}
 
 			boolean recipientExists = false;
-			if(valid)
-			{
+			if (valid) {
 				try {
 					toServer.writeObject(Requests.UserExists);
 					toServer.writeObject(id);
 					Thread.sleep(100);
-					System.out.println("view");
 					recipientExists = (boolean) fromServer.readObject();
-					System.out.println("view2");
 				} catch (Exception e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
+					errorWindow("Failed to make a transfer \n Try again!");
 				}
 			}
-			
-			if(!recipientExists)
+
+			if (!recipientExists)
 				errorWindow("Recipient does not exist! \n Please check ID! ");
-			
-			if (recipientExists && valid && money > balance ) {
+
+			if (recipientExists && valid && money > balance) {
 				errorWindow("Insufficient balance!");
-			} else if( recipientExists && valid){
+			} else if (recipientExists && valid) {
 				try {
 					toServer.writeObject(Requests.Transfer);
 					toServer.writeObject(id);
 					toServer.writeObject(money);
 				} catch (IOException e1) {
-					// TODO require password
-					e1.printStackTrace();
+					errorWindow("Failed to make a transfer \n Try again!");
+				} finally {
+					dispose();
 				}
-				dispose();
 			}
 
 		});
 
 	}
 
+	/**
+	 * Error window.
+	 *
+	 * @param msg
+	 *            the msg
+	 */
 	private void errorWindow(String msg) {
 		JOptionPane.showMessageDialog(new JFrame(), msg, "Error", JOptionPane.WARNING_MESSAGE);
 	}

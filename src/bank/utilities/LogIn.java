@@ -7,7 +7,7 @@ import java.io.Serializable;
  */
 public class LogIn implements Serializable {
 	
-	/** The usr. */
+	/** The username. */
 	private String usr;
 	
 	/** The psw. */

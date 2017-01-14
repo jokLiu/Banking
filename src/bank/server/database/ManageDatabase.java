@@ -10,19 +10,34 @@ import bank.utilities.CustomerInformation;
 import bank.utilities.Titles;
 import bank.utilities.Transaction;
 
-//class for managing the database (dealing with requests)
+/**
+ * The Class ManageDatabase for managing the database (dealing with requests).
+ */
 public class ManageDatabase {
 
+	/** The connection. */
 	private Connection conn;
 
+	/**
+	 * Instantiates a new manage database.
+	 *
+	 * @param conn the connection
+	 */
 	public ManageDatabase(Connection conn) {
 		this.conn = conn;
 	}
 
+	/**
+	 * Adds the new account to database.
+	 *
+	 * @param info the information about customer
+	 * @throws SQLException the SQL exception
+	 */
 	// Adding the account
 	public synchronized void addAccount(CustomerInformation info) throws SQLException {
 		try {
 			int id = getNextId();
+			
 			// creating customer
 			PreparedStatement singleCustomer = conn
 					.prepareStatement("BEGIN; INSERT INTO Customer (id) " + "VALUES (?); ");
@@ -88,7 +103,11 @@ public class ManageDatabase {
 
 	}
 
-	// getting the next unique id
+	/**
+	 * Gets the next unqiue id.
+	 *
+	 * @return the next id
+	 */
 	private int getNextId() {
 		int l = 1000;
 		PreparedStatement nextIdQuery;
@@ -106,7 +125,13 @@ public class ManageDatabase {
 		return l + 1;
 	}
 
-	// query for depositing money to an account
+	/**
+	 * Query for depositing money to an account.
+	 *
+	 * @param id the id
+	 * @param amount the amount
+	 * @throws SQLException the SQL exception
+	 */
 	public synchronized void depositMoney(int id, double amount) throws SQLException {
 
 		PreparedStatement singleCustomer = conn.prepareStatement("BEGIN;" + "UPDATE Account SET balance = balance + ? "
@@ -117,7 +142,14 @@ public class ManageDatabase {
 
 	}
 
-	// query for withdrawing money from an account
+	/**
+	 * Withdraw money.
+	 * query for withdrawing money from an account
+	 * 
+	 * @param id the id
+	 * @param amount the amount
+	 * @throws SQLException the SQL exception
+	 */
 	public synchronized void withdrawMoney(int id, double amount) throws SQLException {
 		PreparedStatement singleCustomer = conn.prepareStatement("BEGIN;" + "UPDATE Account SET balance = balance - ? "
 				+ "WHERE id = ?; "
@@ -126,8 +158,16 @@ public class ManageDatabase {
 		executeStatement(singleCustomer, id, amount);
 	}
 
-	// method for dealing with deposit and withdraw methods
-	// refactored to avoid duplications
+	/**
+	 * Execute statement.
+	 * method for dealing with deposit and withdraw methods
+	 * refactored to avoid duplications 
+	 * 
+	 * @param singleCustomer the single customer
+	 * @param id the id
+	 * @param amount the amount
+	 * @throws SQLException the SQL exception
+	 */
 	private synchronized void executeStatement(PreparedStatement singleCustomer, int id, double amount)
 			throws SQLException {
 		singleCustomer.setDouble(1, amount);
@@ -139,8 +179,14 @@ public class ManageDatabase {
 		singleCustomer.executeUpdate();
 	}
 
-	// transfer method for dealing with money transfers from one account to
-	// another
+	/**
+	 * Transfer.
+	 * transfer method for dealing with money transfers from one account to another
+	 * @param id the id
+	 * @param toId the to id
+	 * @param amount the amount
+	 * @throws SQLException the SQL exception
+	 */
 	public synchronized void transfer(int id, int toId, double amount) throws SQLException {
 
 		PreparedStatement singleCustomer = conn.prepareStatement("BEGIN;" + "UPDATE Account SET balance = balance - ? "
@@ -162,8 +208,15 @@ public class ManageDatabase {
 
 	}
 
-	// getting all the information about the customer
-	// apart from secret log in details
+	/**
+	 * Gets the information.
+	 * getting all the information about the customer
+	 * apart from secret log in details
+	 * 
+	 * @param id the id
+	 * @return the information
+	 * @throws SQLException the SQL exception
+	 */
 	public synchronized CustomerInformation getInformation(int id) throws SQLException {
 		CustomerInformation info = new CustomerInformation();
 
@@ -199,7 +252,14 @@ public class ManageDatabase {
 		return info;
 	}
 
-	// getting the balance of an account
+	/**
+	 * Gets the balance.
+	 * getting the balance of an account
+	 * 
+	 * @param id the id
+	 * @return the balance
+	 * @throws SQLException the SQL exception
+	 */
 	public double getBalance(int id) throws SQLException {
 
 		PreparedStatement getBalance = conn.prepareStatement("SELECT balance FROM Account WHERE id = ? ;");
@@ -215,8 +275,16 @@ public class ManageDatabase {
 		return 0;
 	}
 
-	// return secret word if valid, otherwise null
-	// this determines if the username and password was correct
+	/**
+	 * Checks if is user is valid.
+	 * return secret word
+	 * this determines if the username and password was correct
+	 *
+	 * @param username the username
+	 * @param psw the psw
+	 * @return the secret word
+	 * @throws SQLException the SQL exception
+	 */
 	public String isUserValid(String username, String psw) throws SQLException {
 
 		PreparedStatement getAccount = conn
@@ -233,7 +301,14 @@ public class ManageDatabase {
 		return null;
 	}
 
-	// getting the account id by the username and password
+	/**
+	 * Gets the id.
+	 *
+	 * @param usr the usr
+	 * @param psw the psw
+	 * @return the id
+	 * @throws SQLException the SQL exception
+	 */
 	public int getId(String usr, String psw) throws SQLException {
 
 		PreparedStatement getAccount = conn
@@ -250,7 +325,13 @@ public class ManageDatabase {
 		return 0;
 	}
 
-	// return if a user exists or not
+	/**
+	 * Checks if is user valid.
+	 *
+	 * @param id the id
+	 * @return true, if is user valid
+	 * @throws SQLException the SQL exception
+	 */
 	public boolean isUserValid(int id) throws SQLException {
 		PreparedStatement getAccount = conn.prepareStatement("SELECT id FROM Account WHERE id = ?");
 
@@ -264,7 +345,13 @@ public class ManageDatabase {
 		return false;
 	}
 	
-	//returns the deposit of all the deposits and withrawals
+	/**
+	 * Gets the deposits and withdrawals statements.
+	 *
+	 * @param id the id
+	 * @return the deposits and withdrawals
+	 * @throws SQLException the SQL exception
+	 */
 	public ArrayList<Transaction> getDepositsAndWithdrawals(int id) throws SQLException
 	{
 		
@@ -289,7 +376,13 @@ public class ManageDatabase {
 	
 	}
 	
-	//returns all the transfers
+	/**
+	 * Gets the transfers statements.
+	 *
+	 * @param id the id
+	 * @return the transfers
+	 * @throws SQLException the SQL exception
+	 */
 	public ArrayList<Transaction> getTransfers(int id ) throws SQLException
 	{
 		ArrayList<Transaction> info = new ArrayList<>();
