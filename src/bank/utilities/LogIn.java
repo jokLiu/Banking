@@ -2,8 +2,9 @@ package bank.utilities;
 import java.io.Serializable;
 
 
+// TODO: Auto-generated Javadoc
 /**
- * The Class for keeping Log-in details
+ * The Class for keeping Log-in details.
  */
 public class LogIn implements Serializable {
 	
@@ -13,6 +14,14 @@ public class LogIn implements Serializable {
 	/** The psw. */
 	private String psw;
 	
+	
+	/**
+	 * Instantiates a new log in.
+	 */
+	public LogIn()
+	{
+		
+	}
 	/**
 	 * Instantiates a new log in.
 	 *
@@ -26,7 +35,25 @@ public class LogIn implements Serializable {
 	}
 
 	/**
-	 * Gets the usrername
+	 * Sets the usr.
+	 *
+	 * @param usr the new usr
+	 */
+	public void setUsr(String usr) {
+		this.usr = usr;
+	}
+
+	/**
+	 * Sets the psw.
+	 *
+	 * @param psw the new psw
+	 */
+	public void setPsw(String psw) {
+		this.psw = psw;
+	}
+
+	/**
+	 * Gets the usrername.
 	 *
 	 * @return the usr
 	 */
@@ -35,7 +62,7 @@ public class LogIn implements Serializable {
 	}
 
 	/**
-	 * Gets the password
+	 * Gets the password.
 	 *
 	 * @return the psw
 	 */

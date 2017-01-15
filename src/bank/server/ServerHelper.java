@@ -15,17 +15,41 @@ import bank.utilities.LogIn;
 import bank.utilities.Requests;
 import bank.utilities.Transaction;
 
-//Thread for dealing with a single customer
+/**
+ * The Class ServerHelper.
+ * Thread for dealing with a single customer
+ */
 public class ServerHelper extends Thread {
 
+	/** The database. */
 	private ManageDatabase db;
+	
+	/** The from customer. */
 	private ObjectInputStream fromCustomer;
+	
+	/** The to customer. */
 	private ObjectOutputStream toCustomer;
+	
+	/** The customers. */
 	private CurrentCustomerTable customers;
+	
+	/** The three chars of secret. */
 	private char[] threeSecret = new char[3];
+	
+	/** The three bits of secret password. */
 	private int[] threeBits = new int[3];
+	
+	/** The id. */
 	private int id;
 
+	/**
+	 * Instantiates a new server helper.
+	 *
+	 * @param db the db
+	 * @param fromCustomer the from customer
+	 * @param toCustomer the to customer
+	 * @param customers the customers
+	 */
 	public ServerHelper(ManageDatabase db, ObjectInputStream fromCustomer, ObjectOutputStream toCustomer,
 			CurrentCustomerTable customers) {
 		this.db = db;
@@ -34,6 +58,9 @@ public class ServerHelper extends Thread {
 		this.customers = customers;
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Thread#run()
+	 */
 	/*
 	 * main run method waiting for request and acting upon certain request Runs
 	 * until gets exit message
@@ -75,9 +102,7 @@ public class ServerHelper extends Thread {
 				running = !running;
 				break;
 			case UserExists:
-				System.out.println("made it");
 				userExists();
-
 				break;
 			default:
 				break;
@@ -87,7 +112,10 @@ public class ServerHelper extends Thread {
 
 	}
 
-	// adding the new customer
+	/**
+	 * Register.
+	 * adding the new customer
+	 */
 	private void register() {
 		try {
 			/*
@@ -99,16 +127,18 @@ public class ServerHelper extends Thread {
 			toCustomer.writeObject(Requests.RegisterSuccessful);
 		} catch (ClassNotFoundException | IOException | SQLException e) {
 			try {
-				// e.printStackTrace();
-				System.out.println("lol");
 				toCustomer.writeObject(Requests.RegisterUnsuccessful);
 			} catch (IOException e1) {
-
+				
 			}
 		}
 	}
 
-	// customer log in
+	/**
+	 * Log in.
+	 * customer log in
+	 */
+	
 	private void logIn() {
 		try {
 			// getting the log in details from the customer
@@ -142,15 +172,15 @@ public class ServerHelper extends Thread {
 			} else {
 				toCustomer.writeObject(Requests.WrongLogIn);
 			}
-		} catch (ClassNotFoundException | IOException e) {
-			// TODO
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		} catch (ClassNotFoundException | IOException | SQLException e) {
+			//If exception is thrown then do nothing and wait for the customer 
+		} 
 	}
 
-	// When a secret request from customer is received
+	/**
+	 * Secret.
+	 * When a secret request from customer is received
+	 */
 	private void secret() {
 		try {
 			// reading the char array of secret letters from customer
@@ -168,20 +198,22 @@ public class ServerHelper extends Thread {
 				CustomerInformation info = db.getInformation(id);
 				info.setId(id);
 				customers.addCustomer(id, this);
-				toCustomer.writeObject(info); // ifnormation
+				toCustomer.writeObject(info); // information
 				toCustomer.writeObject(db.getBalance(id)); // double
 			} else {
 				toCustomer.writeObject(Requests.WrongSecret);
 			}
-		} catch (ClassNotFoundException | IOException e) {
-			// TODO
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		} catch (ClassNotFoundException | IOException |SQLException  e) {
+			//If exception is thrown then do nothing and wait for the customer
+		} 
 	}
 
-	// When deposit and withdraw money request is sent
+	/**
+	 * Deposit and withdraw.
+	 * When deposit and withdraw money request is sent
+	 * 
+	 * @param r the r
+	 */
 	private void depositAndWithdraw(Requests r) {
 		try {
 			// receivng the amount to be deposited or withdrawn
@@ -197,15 +229,15 @@ public class ServerHelper extends Thread {
 			for (ServerHelper h : customers.getHelper(id))
 				h.updateCustomer();
 			updateCustomer();
-		} catch (ClassNotFoundException | IOException e) {
-			// TODO
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		} catch (ClassNotFoundException | IOException | SQLException e) {
+			//If exception is thrown then do nothing and wait for the customer
+		} 
 	}
 
-	// When transfer request is received
+	/**
+	 * Transfer.
+	 * When transfer request is received
+	 */
 	private void transfer() {
 		try {
 			// getting recipient id
@@ -227,15 +259,15 @@ public class ServerHelper extends Thread {
 				for (ServerHelper h : customers.getHelper(id))
 					h.updateCustomer();
 			}
-		} catch (ClassNotFoundException | IOException e) {
-			// TODO
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		} catch (ClassNotFoundException | IOException |SQLException e) {
+			//If exception is thrown then do nothing and wait for the customer
+			} 
 	}
 	
 	
+	/**
+	 * Action history.
+	 */
 	private void actionHistory()
 	{
 		try {
@@ -246,46 +278,36 @@ public class ServerHelper extends Thread {
 			toCustomer.writeObject(Requests.ActionHistory);
 			toCustomer.writeObject(deposits);
 			toCustomer.writeObject(transfers);
-		} catch (IOException e) {
-			// TODO
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		} catch (IOException | SQLException e) {
+			// If exception is thrown then do nothing and wait for the customer
 		} 
 	}
 
+	/**
+	 * User exists.
+	 */
 	private void userExists() {
 		try {
 			// update the customer
-			System.out.println("l");
 			int toId = (int) fromCustomer.readObject();
-			System.out.println(toId);
 			boolean check = db.isUserValid(toId);
-			System.out.println(check);
 			toCustomer.writeObject(Requests.UserExists);
 			toCustomer.writeObject(check);
-		} catch (IOException e) {
-			// TODO
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		} catch (IOException | SQLException | ClassNotFoundException e) {
+			// If exception is thrown then do nothing and wait for the customer
+		} 
 	}
 
+	/**
+	 * Update customer.
+	 */
 	// updating another customer which is currently loged in
 	public void updateCustomer() {
 		try {
 			toCustomer.writeObject(Requests.Update);
 			toCustomer.writeObject(db.getBalance(id));
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		} catch (IOException | SQLException e) {
+//			If exception is thrown then do nothing and wait for the customer
+		} 
 	}
 }
